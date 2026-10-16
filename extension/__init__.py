@@ -112,13 +112,13 @@ ELEMENT_NAMES = (
 ABUNDANCE_INI_KEYS = ("q" + element.lower() for element in ELEMENT_NAMES)
 
 
-class InjectionFeature(abc.ABC):
+class BaseInjectionFeature(abc.ABC):
     @abc.abstractmethod
     def add_to_input(self, input: Input) -> None: ...
 
 
 @dataclass
-class InjectionBreak(InjectionFeature):
+class InjectionBreak(BaseInjectionFeature):
     R_GV: float
     delta_slope: float
     omega: float
@@ -134,7 +134,7 @@ class InjectionBreak(InjectionFeature):
 
 
 @dataclass
-class InjectionLognormalDist(InjectionFeature):
+class InjectionLognormalDist(BaseInjectionFeature):
     R_mean_GV: float
     sigma: float
 
@@ -157,7 +157,7 @@ class InjectionLognormalDist(InjectionFeature):
 
 
 @dataclass
-class InjectionExpCutoff(InjectionFeature):
+class InjectionExpCutoff(BaseInjectionFeature):
     R_cut_GV: float
     Delta: float
     is_lower: bool
@@ -170,6 +170,9 @@ class InjectionExpCutoff(InjectionFeature):
                 isLower=self.is_lower,
             )
         )
+
+
+type InjectionFeature = InjectionBreak | InjectionLognormalDist | InjectionExpCutoff
 
 
 @dataclass
