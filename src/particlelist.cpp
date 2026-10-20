@@ -13,7 +13,6 @@
 
 namespace {
 
-
 const char kNucleilistFilename[] = DATA_DIR "crams_nucleilist.csv";
 
 struct AbundanceSetting {
@@ -154,6 +153,16 @@ void ParticleList::setAbundanceChargeGroup(int charge, double abundance) {
 
   for (const auto& particle : group->second) {
     particle->second.abundance = abundance * particle->second.isotopicFractionISM;
+  }
+}
+
+void ParticleList::setPrecomputedInjectionNormChargeGroup(int charge, double norm) {
+  ensureChargeIndexFresh();
+  const auto group = m_particlesByCharge.find(charge);
+  if (group == m_particlesByCharge.end()) return;
+
+  for (const auto& particle : group->second) {
+    particle->second.precomputedInjectionNorm = norm * particle->second.isotopicFractionISM;
   }
 }
 

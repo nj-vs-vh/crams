@@ -46,12 +46,17 @@ CRAMS::Runner::Runner(InelasticModel inelasticModel, FragmentationModel fragment
   }
 }
 
-void CRAMS::Runner::setInjectionParams(std::vector<double> abundances, std::vector<double> slopes) {
+void CRAMS::Runner::setInjectionParams(std::vector<double> abundances, std::vector<double> slopes,
+                                       bool arePrecomputedNorms) {
   auto Zmin = injection.lightest().getZ();
   auto Zmax = injection.heaviest().getZ();
 
-  for (std::size_t abIdx = 0; abIdx < abundances.size(); ++abIdx) {
-    injection.setAbundanceChargeGroup(Zmin + abIdx, abundances[abIdx]);
+  for (std::size_t idx = 0; idx < abundances.size(); ++idx) {
+    if (arePrecomputedNorms) {
+      injection.setPrecomputedInjectionNormChargeGroup(Zmin + idx, abundances[idx]);
+    } else {
+      injection.setAbundanceChargeGroup(Zmin + idx, abundances[idx]);
+    }
   }
 
   auto allSlopesSpecified = slopes.size() >= (unsigned int)(Zmax - Zmin + 1);
@@ -81,7 +86,7 @@ CRAMS::RigiditySpectra CRAMS::Runner::compute(Input input, bool dumpToFile, bool
 
   for (auto& particle : result) {
     if (verbose) {
-      LOGI << "running : " << particle.getPid();
+      LOGI << "running: " << particle.getPid();
     }
     particle.buildVectors(input);
     particle.buildGrammage(input);
@@ -109,7 +114,7 @@ CRAMS::RigiditySpectra CRAMS::Runner::compute(Input input, bool dumpToFile, bool
 }
 
 CRAMS::Result CRAMS::Runner::computeSafe(Input input, bool dumpToFile, bool verbose,
-                                          bool ignoreInputInitParams) noexcept {
+                                         bool ignoreInputInitParams) noexcept {
   try {
     return {compute(input, dumpToFile, verbose, ignoreInputInitParams), false, std::string()};
   } catch (const std::exception& e) {

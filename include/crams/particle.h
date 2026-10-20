@@ -35,6 +35,7 @@ class Particle {
   bool isStable() const { return m_decayTime < 0.; }
   double getDecayTime() const { return m_decayTime; }
   double getAbundance() const { return m_abundance; }
+  double getPrecomputedNorm() const { return m_precomputedInjectionNorm; }
   double getSlope() const { return m_slope; }
   const std::vector<double>& getEnergyVector() const { return m_T; }
   const std::vector<double>& getIntensityVector() const { return m_I_T; }
@@ -79,6 +80,8 @@ class Particle {
   bool m_doGrammageAtSource = false;
   bool m_doSecondary = false;
   double m_abundance = 0;
+  // if set to nonzero, takes precedence over the abundance and skips gamma integration
+  double m_precomputedInjectionNorm = 0;
   double m_slope = 0;
   double m_decayTime = -1;
   std::vector<double> m_T;

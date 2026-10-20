@@ -18,6 +18,8 @@ struct NucleusParameters {
   double decayTime = -1.;  // beta half-life at rest; negative sentinel means stable
   bool isStable = true;
   bool doPropagate = false;
+  double precomputedInjectionNorm =
+      0.;  // if set to nonzero, abundance is ignored and this directly sets spectrum normalization
 
   friend std::ostream& operator<<(std::ostream& stream, const NucleusParameters& inj) {
     stream << "(" << std::scientific << std::setprecision(3) << inj.abundance << ",";
@@ -59,6 +61,7 @@ class ParticleList {
   void print() const;
   void readParamsFromFile(const std::string& filename);
   void setAbundanceChargeGroup(int charge, double abundance);
+  void setPrecomputedInjectionNormChargeGroup(int charge, double norm);
   void setSlopeChargeGroup(int charge, double slope);
   void setSlopeNuclei(int minCharge, double slope);
 

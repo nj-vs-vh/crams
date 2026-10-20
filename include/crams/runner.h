@@ -33,7 +33,7 @@ class Runner {
  public:
   Runner(InelasticModel inelasticModel, FragmentationModel fragmentationModel, ParticleList injection);
   ~Runner() = default;
-  void setInjectionParams(std::vector<double> abundances, std::vector<double> slopes);
+  void setInjectionParams(std::vector<double> abundancesOrNorms, std::vector<double> slopes, bool arePrecomputedNorms);
   RigiditySpectra compute(Input input, bool dumpToFile = false, bool verbose = false,
                           bool ignoreInputInitParams = false);
   Result computeSafe(Input input, bool dumpToFile = false, bool verbose = false,

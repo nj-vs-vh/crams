@@ -92,6 +92,7 @@ const Particle& findParticleOrThrow(const Particles& particles, const PID& pid) 
 Particle::Particle(const PID& pid, const NucleusParameters& nucleusParameters)
     : m_pid(pid),
       m_abundance(nucleusParameters.abundance),
+      m_precomputedInjectionNorm(nucleusParameters.precomputedInjectionNorm),
       m_slope(nucleusParameters.slope),
       m_decayTime(nucleusParameters.decayTime) {}
 
@@ -126,7 +127,7 @@ void Particle::buildGrammage(const Input& input) {
 }
 
 void Particle::buildPrimarySource(const Input& input) {
-  m_Q_p = std::make_unique<PrimarySource>(m_pid, m_abundance, m_slope, input.mu());
+  m_Q_p = std::make_unique<PrimarySource>(m_pid, m_abundance, m_slope, input.mu(), m_precomputedInjectionNorm);
 
   for (const auto& feature : input.sourceSpectrumFeatures()) {
     m_Q_p->addFeature(feature->toPrimarySourceFeature(m_pid));
@@ -233,7 +234,8 @@ void Particle::buildGrammageAtSource(const Input& input, const std::vector<Parti
     const auto& parentPid = particle.getPid();
     if (parentPid.getA() <= m_pid.getA() || !particle.isDone()) continue;
 
-    const auto Q_p = PrimarySource(parentPid, particle.getAbundance(), particle.getSlope(), input.mu());
+    const auto Q_p = PrimarySource(parentPid, particle.getAbundance(), particle.getSlope(), input.mu(),
+                                   particle.getPrecomputedNorm());
     for (size_t i = 0; i < T_X.size(); ++i) {
       const double T = T_X[i];
       const double r = input.X_s() / CGS::meanISMmass * nucfrag.getXsecOnISM(parentPid, m_pid, T);

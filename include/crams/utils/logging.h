@@ -28,7 +28,13 @@ inline void log_startup_information(bool quiet = false) {
 #ifdef DEBUG
   plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
 #else
-  plog::init(plog::info, &fileAppender).addAppender(&consoleAppender);
+  // read env var CRAMS_LOG_LEVEL to override default log level
+  const char* debug = std::getenv("CRAMS_DEBUG");
+  if (debug && std::string(debug) == "1") {
+    plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
+  } else {
+    plog::init(plog::info, &fileAppender).addAppender(&consoleAppender);
+  }
 #endif
 
   LOGI << "Welcome to CRAMS version " << CRAMS::get_version();

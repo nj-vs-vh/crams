@@ -181,6 +181,12 @@ class InjectionParams:
     slopes: Sequence[float]
     features: list[InjectionFeature] = field(default_factory=list)
 
+    # if set to True, the abundances are interpreted as precomputed normalization factors rather than actual abundances
+    # this bypasses the conversion to normalization factors in the underlying C++ code, so slope can be an arbitrary value
+    # not limited to (4, 5) range required for gamma integral convergence
+    # the physical meaning of these values is TBD but the typical range for top contributing nuclei is 70-200
+    abundances_are_precomputed_normalizations: bool = False
+
     def __post_init__(self) -> None:
         if len(self.abundances) > len(ELEMENT_NAMES):
             raise ValueError(f"Too many abundances specified, expected exactly {len(ELEMENT_NAMES)}")
@@ -224,6 +230,42 @@ class InjectionParams:
                 6.80000e-03,  # Fe
                 0.0,  # Co
                 4e-4,  # Ni
+            ],
+            slopes=[4.37, 4.30, 4.36],
+        )
+
+    @staticmethod
+    def default_precomputed_norms():
+        return InjectionParams(
+            abundances=[
+                99.0,  # H
+                181.0,  # He
+                0.0,  # Li
+                0.0,  # Be
+                0.0,  # B
+                75.4,  # C
+                7.4,  # N
+                180.2,  # O
+                0.0,  # F
+                42.5,  # Ne
+                1.8,  # Na
+                91.5,  # Mg
+                11.5,  # Al
+                123.0,  # Si
+                4.9,  # P
+                24.6,  # S
+                0.0,  # Cl
+                17.2,  # Ar
+                0.0,  # K
+                25.3,  # Ca
+                0.0,  # Sc
+                0.0,  # Ti
+                0.0,  # V
+                20.5,  # Cr
+                0.0,  # Mn
+                598.7,  # Fe
+                0.0,  # Co
+                37.0,  # Ni
             ],
             slopes=[4.37, 4.30, 4.36],
         )
@@ -312,7 +354,11 @@ class CramsRunner:
         if injection is not None:
             # per-element injection params do not live inside the "input" object, but in a ParticleList
             # container inside the runner; here we modify them through the dedicated method
-            self._runner.setInjectionParams(abundances=injection.abundances, slopes=injection.slopes)
+            self._runner.setInjectionParams(
+                abundancesOrNorms=injection.abundances,
+                slopes=injection.slopes,
+                arePrecomputedNorms=injection.abundances_are_precomputed_normalizations,
+            )
             for feature in injection.features:
                 feature.add_to_input(input)
         result: Result = self._runner.computeSafe(
