@@ -109,7 +109,7 @@ ELEMENT_NAMES = (
     "Ni",
 )
 
-ABUNDANCE_INI_KEYS = ("q" + element.lower() for element in ELEMENT_NAMES)
+ABUNDANCE_INI_KEYS = ["q" + element.lower() for element in ELEMENT_NAMES]
 
 
 class BaseInjectionFeature(abc.ABC):
@@ -268,6 +268,7 @@ class InjectionParams:
                 37.0,  # Ni
             ],
             slopes=[4.37, 4.30, 4.36],
+            abundances_are_precomputed_normalizations=True,
         )
 
     @staticmethod
@@ -388,7 +389,7 @@ def cli():
     main(args.input_file, args.native_parsing, args.quiet)
 
 
-def main(ini_file: str | Path, native_parsing: bool, quiet: bool):
+def parse_crams_ini(ini_file: Path | str) -> tuple[dict[str, float], dict[str, str], list[InjectionFeature]]:
     ini_file = Path(ini_file)
     params: dict[str, float] = {}
     params_str: dict[str, str] = {}
@@ -417,6 +418,12 @@ def main(ini_file: str | Path, native_parsing: bool, quiet: bool):
             params[key] = float(value)
         except ValueError:
             params_str[key] = value
+
+    return params, params_str, features
+
+
+def main(ini_file: str | Path, native_parsing: bool, quiet: bool):
+    params, params_str, features = parse_crams_ini(ini_file)
 
     print(f"Running CRAMS v{get_version()} via Python steering")
     print(f"SHA1: {git_sha1()}")
