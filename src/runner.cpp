@@ -53,8 +53,10 @@ void CRAMS::Runner::setInjectionParams(std::vector<double> abundances, std::vect
 
   for (std::size_t idx = 0; idx < abundances.size(); ++idx) {
     if (arePrecomputedNorms) {
+      LOGD << "Setting precomputed injection norm for charge group " << (Zmin + idx) << " to " << abundances[idx];
       injection.setPrecomputedInjectionNormChargeGroup(Zmin + idx, abundances[idx]);
     } else {
+      LOGD << "Setting abundance for charge group " << (Zmin + idx) << " to " << abundances[idx];
       injection.setAbundanceChargeGroup(Zmin + idx, abundances[idx]);
     }
   }
@@ -75,6 +77,9 @@ CRAMS::RigiditySpectra CRAMS::Runner::compute(Input input, bool dumpToFile, bool
     throw std::runtime_error("compute method called on input with mismatching inelastic and/or fragmentation model");
   }
 
+  LOGI << "Injection parameters:";
+  injection.print();
+
   Particles result;
   auto list = injection.getList();
   result.reserve(list.size());
@@ -85,9 +90,7 @@ CRAMS::RigiditySpectra CRAMS::Runner::compute(Input input, bool dumpToFile, bool
   }
 
   for (auto& particle : result) {
-    if (verbose) {
-      LOGI << "running: " << particle.getPid();
-    }
+    LOGI << "running: " << particle.getPid();
     particle.buildVectors(input);
     particle.buildGrammage(input);
     particle.buildLosses(input);

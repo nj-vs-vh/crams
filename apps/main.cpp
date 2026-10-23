@@ -21,7 +21,8 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  log_startup_information(quiet);
+  setup_logging(quiet, false);
+  if (!quiet) log_startup_information();
 
   try {
     CRAMS::Input input;

@@ -50,7 +50,7 @@ struct ExpCutoff : public SpectralFeature {
 
 class PrimarySource {
  public:
-  PrimarySource(const PID& pid, double abundance, double slope, double surfaceDensity, double precomputedNorm = 0.);
+  PrimarySource(const PID& pid, double abundance, double slope, double surfaceDensity, double precomputedNorm = -1.);
   PrimarySource(const PrimarySource&) = delete;
   PrimarySource& operator=(const PrimarySource&) = delete;
   PrimarySource(PrimarySource&&) noexcept = default;

@@ -32,8 +32,13 @@ from .crams import (
     parseFragmentationModel,
     parseInelasticModel,
 )
+from .crams import setup_logging as _setup_logging
 
 __version__ = get_version()
+
+
+def setup_logging(debug: bool) -> None:
+    _setup_logging(False, forceDebug=debug)
 
 
 @dataclass

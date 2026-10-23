@@ -36,13 +36,16 @@ double ExpCutoff::computeModifier(double T) const {
 PrimarySource::PrimarySource(const PID& pid, double abundance, double slope, double surfaceDensity,
                              double precomputedNorm)
     : m_pid(pid), m_slope(slope) {
-  if (precomputedNorm > 0.) {
+  if (precomputedNorm >= 0.) {
     m_norm = precomputedNorm;
+    LOGD << "Normalization for " << pid << " specified directly = " << m_norm;
   } else if (abundance > 0.) {
+    LOGI << "Computing normalization for " << pid << " with abundance = " << abundance << " and slope = " << slope;
     static constexpr double L_SN_surface = CGS::E_SN * CGS::snRate / M_PI / pow2(CGS::galaxySize);
     m_norm = static_cast<double>(pid.getA()) * abundance * L_SN_surface /
              (surfaceDensity * Numeric::gammaIntegral(slope) * pow2(CGS::protonMassC2));
-    LOGD << "Abundance for " << pid << " = " << abundance << " with slope = " << slope << " converted to normalization = " << m_norm;
+    LOGD << "Abundance for " << pid << " = " << abundance << " with slope = " << slope
+         << " converted to normalization = " << m_norm;
   }
 }
 

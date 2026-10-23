@@ -110,7 +110,8 @@ T QAGIUIntegration(std::function<T(T)> f, T start, size_t limit = 1000, double r
 // Dimensionless spectral integral 4 pi ∫ x^(2-slope) (sqrt(1 + x^2) - 1) dx, slope ∈ (4, 5).
 // Used to normalise the primary CR source to the SNR energy budget.
 inline double gammaIntegral(double slope) {
-  if (!(slope > 4.0 && slope < 5.0)) throw std::invalid_argument("slope must be in (4, 5)");
+  if (!(slope > 4.0 && slope < 5.0))
+    throw std::invalid_argument("slope must be in (4, 5), specified  " + std::to_string(slope));
 
   double result;
   if (slope < 4.1) {

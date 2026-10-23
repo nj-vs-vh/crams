@@ -152,6 +152,7 @@ void ParticleList::setAbundanceChargeGroup(int charge, double abundance) {
   if (group == m_particlesByCharge.end()) return;
 
   for (const auto& particle : group->second) {
+    particle->second.precomputedInjectionNorm = -1;
     particle->second.abundance = abundance * particle->second.isotopicFractionISM;
   }
 }
@@ -284,7 +285,7 @@ void ParticleList::rebuildChargeIndex() {
 
 void ParticleList::print() const {
   LOGI << "Particle list contains " << m_list.size() << " nuclei.";
-  for (const auto& particle : m_list) LOGD << "found nucleus " << particle.first << " with params " << particle.second;
+  for (const auto& particle : m_list) LOGD << " - " << particle.first << " params " << particle.second;
 }
 
 }  // namespace CRAMS

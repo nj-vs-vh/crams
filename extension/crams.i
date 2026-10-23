@@ -13,6 +13,7 @@
 
 %include "crams/utils/git_revision.h"
 
+%include "crams/utils/logging.h"
 %include "crams/core/cgs.h"
 %include "crams/core/pid.h"
 %include "crams/particle.h"

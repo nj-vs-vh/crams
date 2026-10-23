@@ -10,7 +10,7 @@
 
 #include "crams/utils/git_revision.h"
 
-inline void log_startup_information(bool quiet = false) {
+inline void setup_logging(bool quiet = false, bool forceDebug = false) {
   if (plog::get() != nullptr) return;  // already initialized
 
   if (quiet) {
@@ -25,18 +25,15 @@ inline void log_startup_information(bool quiet = false) {
   static plog::RollingFileAppender<plog::CsvFormatter> fileAppender("output/cramslog.csv");
   static plog::ConsoleAppender<plog::TxtFormatter> consoleAppender;
 
-#ifdef DEBUG
-  plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
-#else
-  // read env var CRAMS_LOG_LEVEL to override default log level
-  const char* debug = std::getenv("CRAMS_DEBUG");
-  if (debug && std::string(debug) == "1") {
+  const char* debugEnvVar = std::getenv("CRAMS_DEBUG");
+  if (forceDebug || (debugEnvVar && std::string(debugEnvVar) == "1")) {
     plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
   } else {
     plog::init(plog::info, &fileAppender).addAppender(&consoleAppender);
   }
-#endif
+}
 
+inline void log_startup_information() {
   LOGI << "Welcome to CRAMS version " << CRAMS::get_version();
   LOGI << "built on " << __DATE__ << " at " << __TIME__;
   LOGI << "git SHA1: " << CRAMS::git_sha1();

@@ -80,8 +80,8 @@ class Particle {
   bool m_doGrammageAtSource = false;
   bool m_doSecondary = false;
   double m_abundance = 0;
-  // if set to nonzero, takes precedence over the abundance and skips gamma integration
-  double m_precomputedInjectionNorm = 0;
+  // if set to non-negative value, takes precedence over the abundance and skips gamma integration
+  double m_precomputedInjectionNorm = -1;
   double m_slope = 0;
   double m_decayTime = -1;
   std::vector<double> m_T;

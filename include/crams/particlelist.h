@@ -19,12 +19,14 @@ struct NucleusParameters {
   bool isStable = true;
   bool doPropagate = false;
   double precomputedInjectionNorm =
-      0.;  // if set to nonzero, abundance is ignored and this directly sets spectrum normalization
+      -1.;  // if set to non-negative value, abundance is ignored and this directly sets spectrum normalization
 
   friend std::ostream& operator<<(std::ostream& stream, const NucleusParameters& inj) {
-    stream << "(" << std::scientific << std::setprecision(3) << inj.abundance << ",";
-    stream << std::fixed << std::setprecision(3) << inj.slope << ",";
-    stream << std::boolalpha << inj.isStable << ")";
+    stream << "(" << "q=" << std::scientific << std::setprecision(3) << inj.abundance << ", ";
+    stream << "slope=" << std::fixed << std::setprecision(3) << inj.slope << ", ";
+    stream << "isStable=" << std::boolalpha << inj.isStable;
+    if (inj.precomputedInjectionNorm >= 0.) stream << ", precomputedInjectionNorm=" << inj.precomputedInjectionNorm;
+    stream << ")";
     return stream;
   }
 };
